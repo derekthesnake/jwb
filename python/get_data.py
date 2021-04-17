@@ -1,7 +1,34 @@
 import cv2
 import mediapipe as mp
+import math
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
+
+DIST_PAIRS = [
+  (0, 1),
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (0, 5),
+  (5, 6),
+  (6, 7),
+  (7, 8),
+  (5, 9),
+  (9, 10),
+  (10, 11),
+  (11, 12),
+  (9, 13),
+  (13, 14),
+  (14, 15),
+  (15, 16),
+  (0, 17),
+  (13, 17),
+  (17, 18),
+  (18, 19),
+  (19, 20)
+]
+
+dist = lambda a, b: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2)
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -30,7 +57,10 @@ with mp_hands.Hands(
       for hand_landmarks in results.multi_hand_landmarks:
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-        print(hand_landmarks)
+        dists = []
+        for (i, j) in DIST_PAIRS:
+          dists.append(dist(hand_landmarks.landmark[i], hand_landmarks.landmark[j]))
+        print(dists)
     cv2.imshow('MediaPipe Hands', image)
     if cv2.waitKey(0) & 0xFF == 27:
       continue
