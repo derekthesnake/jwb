@@ -156,7 +156,14 @@ function onResults(results) {
     if (results.multiHandLandmarks) {
         var hand = results.multiHandLandmarks[0]
         // console.log(classify(dists(hand), hand))
-        console.log(verify(dists(hand), hand, 'd', 25));
+
+        let a = [];
+        for (let letter of 'abcdefghijklmnopqrstuvwxyz') {
+            if (verify(dists(hand), hand, letter, 25)) {
+                a.push(letter);
+            }
+        }
+        console.log(a);
         for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,
                 { color: '#00FF00', lineWidth: 5 });
