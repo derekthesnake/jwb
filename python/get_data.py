@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import math, ast, itertools as it, string, statistics, os
-import tqdm
+#import tqdm
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -104,7 +104,8 @@ def read_static():
       min_detection_confidence=0.5) as hands:
 
     letters2 = [[] for _ in range(5)] #[0 for _ in range(26)]
-    for (parent, _, files) in tqdm.tqdm(list(sorted(os.walk('../ASL Alphabet Dataset'), key = lambda i: i[0][-1]))):
+#    for (parent, _, files) in tqdm.tqdm(list(sorted(os.walk('../ASL Alphabet Dataset'), key = lambda i: i[0][-1]))):
+    for (parent, _, files) in list(sorted(os.walk('../ASL Alphabet Dataset'), key = lambda i: i[0][-1])):
       if parent == '../ASL Alphabet Dataset':
         continue
 
