@@ -115,7 +115,7 @@ def read_static():
       # for fp in [i for i in files if i.endswith('.png')]:
       
       # fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-1]
-      for idx, fp in enumerate([i for i in files if i.endswith('.png')]):
+      for idx, fp in enumerate(sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))):
         image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
         results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
