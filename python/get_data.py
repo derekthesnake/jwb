@@ -83,7 +83,13 @@ def _classify(dists, hand, l):
   return s
 
 def classify(dists, hand):
-  return [_classify(dists, hand, i) for i in letters]
+  x = [_classify(dists, hand, i) for i in letters]
+  print(x, end=' => ')
+  # if x[1] == 's':
+  #   return 's'
+  # if x[0] == 'o' and max(x, key=x.count) == 'n':
+  #   return 'm'
+  return max(x, key=x.count)
 
 def read_static():
   with mp_hands.Hands(
