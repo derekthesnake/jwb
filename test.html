@@ -12,18 +12,24 @@
 </head>
 
 <script type="module">
-    const videoElement = document.getElementsByClassName('input_image')[0];
+    const imageElement = document.getElementsByClassName('input_image')[0];
+    const videoElement = document.getElementsByClassName('input_video')[0];
     const canvasElement = document.getElementsByClassName('output_canvas')[0];
     const canvasCtx = canvasElement.getContext('2d');
+    const target_width = imageElement.clientWidth;
+    const target_height = imageElement.clientHeight;
+    canvasCtx.width = target_width;
+    canvasCtx.height = target_height;
 
     async function send_img(){
         console.log("sending image");
-        await hands.send({image: videoElement})
+        await hands.send({image: videoElement});
     }
+
 
     videoElement.addEventListener("load", async () => {
             console.log("loaded image");
-            await hands.send({ image: videoElement });
+            send_img();
         });
 
     function onResults(results) {
@@ -52,6 +58,8 @@
         staticImageMode: true
     });
     hands.onResults(onResults);
+
+    send_img();
 
 
 
