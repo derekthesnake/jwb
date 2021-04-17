@@ -84,19 +84,20 @@ function dists(hand){
     return d
 }
 
-function _classify(dists, hand, l){
-    function helper(i){
-        var sum = 0
-        for (var j = 0; j < i.length; j++){
-            sum += Math.abs(dists[j] - i[j])
-        }
-        return sum
+function helper(dists, i){
+    var sum = 0
+    for (var j = 0; j < i.length; j++){
+        sum += Math.abs(dists[j] - i[j])
     }
+    return sum
+}
+
+function _classify(dists, hand, l){
     var min = Number.POSITIVE_INFINITY;
     var min_idx = -1;
     for (var el of l){
-        if (min > helper(el)){
-            min = helper(el);
+        if (min > helper(dists, el)){
+            min = helper(dists, el);
             min_idx = el
         }
     }
@@ -133,6 +134,19 @@ function classify(dists, hand){
     return max_idx
 }
 
+function verify(dists, hand, target, threshold) {
+    let a = 0, b = [];
+    for (let i of letters) {
+        var diff = helper(dists, i[target.charCodeAt(0) - 97]);
+        b.push(diff);
+        a += diff;
+    }
+
+    // console.log(a, b, a < threshold);
+    return a < threshold;
+    // return diff < threshold;
+}
+
 
 function onResults(results) {
     canvasCtx.save();
@@ -141,7 +155,8 @@ function onResults(results) {
         results.image, 0, 0, canvasElement.width, canvasElement.height);
     if (results.multiHandLandmarks) {
         var hand = results.multiHandLandmarks[0]
-        console.log(classify(dists(hand), hand))
+        // console.log(classify(dists(hand), hand))
+        console.log(verify(dists(hand), hand, 'd', 25));
         for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,
                 { color: '#00FF00', lineWidth: 5 });
