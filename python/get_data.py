@@ -7,7 +7,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 dist = lambda a, b, z=True: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 if z else 0)
-dist_arr = lambda a, b: abs(a - b) ** 1/2
+dist_arr = lambda a, b: abs(a - b)#  ** 1/4
 
 # letters = list(map(ast.literal_eval, open('letters.txt').readlines()))
 # dists = lambda h: [dist(h.landmark[i], h.landmark[j]) for (i, j) in mp_hands.HAND_CONNECTIONS]
@@ -85,6 +85,12 @@ def _classify(dists, hand, l):
 def classify(dists, hand):
   x = [_classify(dists, hand, i) for i in letters]
   print(x, end=' => ')
+  # if max(x, key=x.count) == 'u' and x[3] == 'r':
+   #  return 'r'
+##  i, j = (5, 6), (5, 9)
+##  v1, v2 = vec(hand, i), vec(hand, j)
+##  ang = angle(v1, v2)
+##  print(ang, end = ' <= ')
   # if x[1] == 's':
   #   return 's'
   # if x[0] == 'o' and max(x, key=x.count) == 'n':
