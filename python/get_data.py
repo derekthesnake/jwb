@@ -30,7 +30,8 @@ with mp_hands.Hands(
       for hand_landmarks in results.multi_hand_landmarks:
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+        print(hand_landmarks)
     cv2.imshow('MediaPipe Hands', image)
-    if cv2.waitKey(5) & 0xFF == 27:
-      break
+    if cv2.waitKey(0) & 0xFF == 27:
+      continue
 cap.release()
