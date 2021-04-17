@@ -11,6 +11,56 @@ dist_arr = lambda a, b: abs(a - b)
 
 # letters = list(map(ast.literal_eval, open('letters.txt').readlines()))
 # dists = lambda h: [dist(h.landmark[i], h.landmark[j]) for (i, j) in mp_hands.HAND_CONNECTIONS]
+# input(mp_hands.HAND_CONNECTIONS)
+
+DIST_PAIRS = [
+  (0, 1),
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (0, 5),
+  (5, 6),
+  (6, 7),
+  (7, 8),
+  (5, 9),
+  (9, 10),
+  (10, 11),
+  (11, 12),
+  (9, 13),
+  (13, 14),
+  (14, 15),
+  (15, 16),
+  (0, 17),
+  (13, 17),
+  (17, 18),
+  (18, 19),
+  (19, 20)
+]
+
+ANGLE_PAIRS = [(0, 1), (1, 2), (2, 3), (0, 4), (4, 5), (5, 6), (6, 7), (4, 8), (5, 8), (9, 10), (10, 11), (12, 9), (12, 13), (13, 14), (14, 15), (17, 13), (17, 18), (4, 16), (18, 19), (19, 20)]
+
+def dotproduct(v1, v2):
+  return sum((a*b) for a, b in zip(v1, v2))
+
+def length(v):
+  return math.sqrt(dotproduct(v, v))
+
+def angle(v1, v2):
+  return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
+
+def vec(hand, pair):
+  a, b = pair
+  return (hand.landmark[a].x - hand.landmark[b].x, hand.landmark[a].y - hand.landmark[b].y , hand.landmark[a].z - hand.landmark[b].z)
+  
+
+def dists(hand):
+  d = []
+  for (a, b) in ANGLE_PAIRS:
+    i, j = DIST_PAIRS[a], DIST_PAIRS[b]
+    v1, v2 = vec(hand, i), vec(hand, j)
+    ang = angle(v1, v2)
+    d.append(ang)
+  return d
 
 def classify(dists):
   fn = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
@@ -33,17 +83,20 @@ def read_static():
 
       # print(parent, string.ascii_uppercase.index(parent[-1]))
 
-      # for fp in [[i for i in files if i.endswith('.png')][0]]:
-      # fp = max([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))
-      for fp in [i for i in files if i.endswith('.png')]:
-        image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
-        results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+      # for fp in [i for i in files if i.endswith('.png')]:
+      fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-1]
+        # for fp in [[i for i in files if i.endswith('.png')]][0]:
+      image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
+      results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
-        if not results.multi_hand_landmarks:
-          continue
-        
-        hand_1 = results.multi_hand_landmarks[0]
-        l.append(dists(hand_1))
+      if not results.multi_hand_landmarks:
+        continue
+      
+      hand_1 = results.multi_hand_landmarks[0]
+      l.append(dists(hand_1))
+
+      # for i in l: print(i)
+      # input()
 
       # annotated_image = image.copy()
       # mp_drawing.draw_landmarks(
