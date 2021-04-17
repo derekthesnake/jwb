@@ -5,37 +5,15 @@ import math, ast, itertools as it, string
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-DIST_PAIRS = [
-  (0, 1),
-  (1, 2),
-  (2, 3),
-  (3, 4),
-  (0, 5),
-  (5, 6),
-  (6, 7),
-  (7, 8),
-  (5, 9),
-  (9, 10),
-  (10, 11),
-  (11, 12),
-  (9, 13),
-  (13, 14),
-  (14, 15),
-  (15, 16),
-  (0, 17),
-  (13, 17),
-  (17, 18),
-  (18, 19),
-  (19, 20)
-]
-
 dist = lambda a, b: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2)
-dist_arr = lambda a, b: abs(a - b)
+dist_arr = lambda a, b: abs(a - b) ** 2
 
-letters = list(map(ast.literal_eval, open('../asl_letters.txt').readlines()[1:]))
+# letters = list(map(ast.literal_eval, open('../asl_letters.txt').readlines()[1:]))
 
 def classify(dists):
-  x = min(letters, key = lambda i: sum(it.starmap(dist_arr, zip(dists, i))))
+  fn = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
+  x = min(letters, key = fn)
+  # print(list(map(fn, letters)))
   return string.ascii_letters[letters.index(x)]
 
 
@@ -67,9 +45,10 @@ with mp_hands.Hands(
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
         dists = []
-        for (i, j) in DIST_PAIRS:
+        for (i, j) in mp_hands.HAND_CONNECTIONS:
           dists.append(dist(hand_landmarks.landmark[i], hand_landmarks.landmark[j]))
-        print(classify(dists))
+        print(dists)
+        # print(classify(dists))
     cv2.imshow('MediaPipe Hands', image)
     if cv2.waitKey(0) & 0xFF == 27:
       continue
