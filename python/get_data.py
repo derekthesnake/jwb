@@ -7,7 +7,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 dist = lambda a, b, z=True: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 if z else 0)
-dist_arr = lambda a, b: abs(a - b)
+dist_arr = lambda a, b: abs(a - b) ** 1/2
 
 # letters = list(map(ast.literal_eval, open('letters.txt').readlines()))
 # dists = lambda h: [dist(h.landmark[i], h.landmark[j]) for (i, j) in mp_hands.HAND_CONNECTIONS]
@@ -37,7 +37,15 @@ DIST_PAIRS = [
   (19, 20)
 ]
 
-ANGLE_PAIRS = [(0, 1), (1, 2), (2, 3), (0, 4), (4, 5), (5, 6), (6, 7), (4, 8), (5, 8), (9, 10), (10, 11), (12, 9), (12, 13), (13, 14), (14, 15), (17, 13), (17, 18), (4, 16), (18, 19), (19, 20)]
+# ANGLE_PAIRS = [(0, 1), (1, 2), (2, 3), (0, 4), (4, 5), (5, 6), (6, 7), (4, 8), (5, 8), (9, 10), (10, 11), (12, 9), (12, 13), (13, 14), (14, 15), (17, 13), (17, 18), (4, 16), (18, 19), (19, 20)]
+
+angles = []
+for a, i in enumerate(DIST_PAIRS):
+  for b, j in enumerate(DIST_PAIRS):
+    if a != b and any(q in j for q in i) and (b, a) not in angles:
+      angles.append((a, b))
+      # print(i, j)
+# print(angles)
 
 def dotproduct(v1, v2):
   return sum((a*b) for a, b in zip(v1, v2))
@@ -55,18 +63,18 @@ def vec(hand, pair):
 
 def dists(hand):
   d = []
-  for (a, b) in ANGLE_PAIRS:
+  for (a, b) in angles:
     i, j = DIST_PAIRS[a], DIST_PAIRS[b]
     v1, v2 = vec(hand, i), vec(hand, j)
     ang = angle(v1, v2)
     d.append(ang)
   return d
 
-def classify(dists, hand):
+def _classify(dists, hand, l):
   fn = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
-  x = min(letters, key = fn)
+  x = min(l, key = fn)
   # print(list(map(fn, letters)))
-  s = string.ascii_letters[letters.index(x)]
+  s = string.ascii_letters[l.index(x)]
 
   if s == 'y':
     if abs(hand.landmark[4].x - hand.landmark[6].x) < abs(hand.landmark[5].x - hand.landmark[9].x):
@@ -74,13 +82,16 @@ def classify(dists, hand):
 
   return s
 
+def classify(dists, hand):
+  return [_classify(dists, hand, i) for i in letters]
+
 def read_static():
   with mp_hands.Hands(
       static_image_mode=True,
       max_num_hands=2,
       min_detection_confidence=0.5) as hands:
 
-    letters2 = [] #[0 for _ in range(26)]
+    letters2 = [[] for _ in range(5)] #[0 for _ in range(26)]
     for (parent, _, files) in tqdm.tqdm(list(sorted(os.walk('../ASL Alphabet Dataset'), key = lambda i: i[0][-1]))):
       if parent == '../ASL Alphabet Dataset':
         continue
@@ -90,16 +101,18 @@ def read_static():
       # print(parent, string.ascii_uppercase.index(parent[-1]))
 
       # for fp in [i for i in files if i.endswith('.png')]:
-      fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-2]
-        # for fp in [[i for i in files if i.endswith('.png')]][0]:
-      image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
-      results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-
-      if not results.multi_hand_landmarks:
-        continue
       
-      hand_1 = results.multi_hand_landmarks[0]
-      l.append(dists(hand_1))
+      # fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-1]
+      for idx, fp in enumerate([i for i in files if i.endswith('.png')]):
+        image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
+        results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+        if not results.multi_hand_landmarks:
+          continue
+        
+        hand_1 = results.multi_hand_landmarks[0]
+        letters2[idx].append(dists(hand_1))
+      # l.append(dists(hand_1))
 
       # for i in l: print(i)
       # input()
@@ -111,9 +124,9 @@ def read_static():
       # './annotated_image.png', cv2.flip(annotated_image, 1))
       # input()
         
-      l = list(map(statistics.mean, zip(*l)))
+      # l = list(map(statistics.mean, zip(*l)))
       # letters2[string.ascii_uppercase.index(parent[-1])] = l
-      letters2.append(l)
+      # letters2.append(l)
 
   with open("letters.txt", "w") as f:
     for i in letters2:
