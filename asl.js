@@ -135,15 +135,20 @@ function classify(dists, hand){
 }
 
 function verify(dists, hand, target, threshold) {
-    let a = 0, b = [];
+    // let a = 0, b = [];
     for (let i of letters) {
         var diff = helper(dists, i[target.charCodeAt(0) - 97]);
-        b.push(diff);
-        a += diff;
+        // b.push(diff);
+        // a += diff;
+        if (diff < threshold) {
+            return true;
+        }
     }
 
+    return false;
+
     // console.log(a, b, a < threshold);
-    return a < threshold;
+    // return a < threshold;
     // return diff < threshold;
 }
 
@@ -159,7 +164,7 @@ function onResults(results) {
 
         let a = [];
         for (let letter of 'abcdefghijklmnopqrstuvwxyz') {
-            if (verify(dists(hand), hand, letter, 25)) {
+            if (verify(dists(hand), hand, letter, 5)) {
                 a.push(letter);
             }
         }
