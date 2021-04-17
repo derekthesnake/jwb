@@ -6,7 +6,7 @@ import tqdm
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-dist = lambda a, b: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2)
+dist = lambda a, b, z=True: math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 if z else 0)
 dist_arr = lambda a, b: abs(a - b)
 
 # letters = list(map(ast.literal_eval, open('letters.txt').readlines()))
@@ -50,7 +50,7 @@ def angle(v1, v2):
 
 def vec(hand, pair):
   a, b = pair
-  return (hand.landmark[a].x - hand.landmark[b].x, hand.landmark[a].y - hand.landmark[b].y , hand.landmark[a].z - hand.landmark[b].z)
+  return (hand.landmark[b].x - hand.landmark[a].x, hand.landmark[b].y - hand.landmark[a].y , hand.landmark[b].z - hand.landmark[a].z)
   
 
 def dists(hand):
@@ -62,11 +62,17 @@ def dists(hand):
     d.append(ang)
   return d
 
-def classify(dists):
+def classify(dists, hand):
   fn = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
   x = min(letters, key = fn)
   # print(list(map(fn, letters)))
-  return string.ascii_letters[letters.index(x)]
+  s = string.ascii_letters[letters.index(x)]
+
+  if s == 'y':
+    if abs(hand.landmark[4].x - hand.landmark[6].x) < abs(hand.landmark[5].x - hand.landmark[9].x):
+      s = 'i'
+
+  return s
 
 def read_static():
   with mp_hands.Hands(
@@ -84,7 +90,7 @@ def read_static():
       # print(parent, string.ascii_uppercase.index(parent[-1]))
 
       # for fp in [i for i in files if i.endswith('.png')]:
-      fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-1]
+      fp = sorted([i for i in files if i.endswith('.png')], key = lambda i: int(i.split("_")[1].split(".")[0]))[-2]
         # for fp in [[i for i in files if i.endswith('.png')]][0]:
       image = cv2.flip(cv2.imread(parent + '/' + fp), 1)
       results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -144,7 +150,7 @@ with mp_hands.Hands(
       for hand_landmarks in results.multi_hand_landmarks:
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-        print(classify(dists(hand_landmarks)))
+        print(classify(dists(hand_landmarks), hand_landmarks))
     cv2.imshow('MediaPipe Hands', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
