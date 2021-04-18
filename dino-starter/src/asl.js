@@ -32,7 +32,7 @@ class Queue {
     }
 }
 
-let queue = Queue();
+let queue = new Queue();
 
 function dist(a, b, z = true) {
     let add = 0;
