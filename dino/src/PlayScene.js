@@ -28,8 +28,8 @@ class PlayScene extends Phaser.Scene {
       .setBodySize(44, 92)
       .setDepth(1)
       .setCollideWorldBounds(true)
-      .setGravityY(5000)
-      .setScale(0.25, 0.25);
+      .setGravityY(5000);
+      // .setScale(0.25, 0.25);
 
     this.scoreText = this.add
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
@@ -128,10 +128,10 @@ class PlayScene extends Phaser.Scene {
           if (this.ground.width < width) {
             this.ground.width += 17 * 2;
           }
-            // this.isGameRunning = true;
+          //   this.isGameRunning = true;
           if (this.ground.width >= width) {
             this.ground.width = width;
-
+            this.isGameRunning = true;
             this.dino.setVelocity(0);
             this.scoreText.setAlpha(1);
             this.environment.setAlpha(1);
@@ -229,7 +229,7 @@ class PlayScene extends Phaser.Scene {
     let alphabet = "ABCDEF"
     let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
 
-    const WORDS = ["CAD", "AID", "BEACH", "ADAGE"]
+    // const WORDS = ["CAD", "AID", "BEACH", "ADAGE"]
     let word = WORDS[Math.floor(Math.random() * WORDS.length)]
     for (const [i, letter] of word.split("").entries()) {
       let obstacle = this.obstacles.create(width + distance + i * 50, height, `letter-${letter}`);
