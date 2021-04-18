@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      .main {
+        display: flex;
+      }
+      .left-container {
+        flex: 0 1 50%;
+        max-width: 50%;
+      }
+      .right-container {
+        flex: 0 1 50%;
+        max-width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="left-container">
+        <video class="input_video" style="display:none"></video>
+        <canvas class="output_canvas" width="889px" height="500px"></canvas>
+      </div>
+      <div class="right-container">
+        <canvas width="1000" height="340" style="image-rendering: pixelated;" id="phaser-canvas"></canvas>
+      </div>
+    </div>
+  </body>
+</html>

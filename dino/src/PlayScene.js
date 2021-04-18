@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
+import { aslQueue, queue } from './asl';
+
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'CUBE', 'WATER', 'MILK', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -8,8 +11,8 @@ class PlayScene extends Phaser.Scene {
 
   create() {
     this.isGameRunning = false;
-    this.gameSpeed = 10;
-    this.respawnTime = 0;
+    this.gameSpeed = 5;
+    this.respawnTime = 1000;
     this.score = 0;
     const { height, width } = this.game.config;
 
@@ -17,15 +20,16 @@ class PlayScene extends Phaser.Scene {
     this.hitSound = this.sound.add('hit', { volume: 0.2 });
     this.reachSound = this.sound.add('reach', { volume: 0.2 });
 
-    this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
+    // this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
-    this.ground = this.add.tileSprite(0, height, 88, 26, 'ground').setOrigin(0, 1);
+    this.ground = this.add.tileSprite(0, height * 1.5, 3836, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
       .setOrigin(0, 1)
-      .setBodySize(44, 92)
+      // .setBodySize(44, 92)
       .setDepth(1)
       .setCollideWorldBounds(true)
-      .setGravityY(5000);
+      .setGravityY(5000)
+        .setScale(0.25, 0.25);
 
     this.scoreText = this.add
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
@@ -36,6 +40,10 @@ class PlayScene extends Phaser.Scene {
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
       .setOrigin(1, 0)
       .setAlpha(0);
+
+    this.feedbackText = this.add
+      .text(0, 0, '', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
+      .setOrigin(0, 0);
 
     this.gameOverScreen = this.add.container(width / 2, height / 2 - 50).setAlpha(0);
     this.gameOverText = this.add.image(0, 0, 'game-over');
@@ -64,6 +72,12 @@ class PlayScene extends Phaser.Scene {
     this.initStartTrigger();
     this.handleInputs();
     this.handleScore();
+
+      this.dino.setVelocity(0);
+      this.scoreText.setAlpha(1);
+      this.environment.setAlpha(1);
+
+    this.sinceLastFired = 0;
   }
 
   initColliders() {
@@ -81,8 +95,8 @@ class PlayScene extends Phaser.Scene {
       this.isGameRunning = false;
       this.anims.pauseAll();
       this.dino.setTexture('dino-hurt');
-      this.respawnTime = 0;
-      this.gameSpeed = 10;
+      this.respawnTime = 1000;
+      this.gameSpeed = 2;
       this.gameOverScreen.setAlpha(1);
       this.score = 0;
       this.hitSound.play();
@@ -103,38 +117,42 @@ class PlayScene extends Phaser.Scene {
       this.anims.resumeAll();
     });
 
-    this.physics.add.overlap(this.startTrigger, this.dino, () => {
-      if (this.startTrigger.y === 10) {
-        this.startTrigger.body.reset(0, height);
-        return;
-      }
-      this.startTrigger.disableBody(true, true);
+    // this.startTrigger.on('pointerdown', () => {
+    //
+    // });
 
-      const startEvent = this.time.addEvent({
-        delay: 1000 / 60,
-        loop: true,
-        callbackScope: this,
-        callback: () => {
-          this.dino.setVelocityX(80);
-          this.dino.play('dino-run', 1);
-          if (this.ground.width < width) {
-            this.ground.width += 17 * 2;
-          }
-          if (this.ground.width >= width) {
-            this.ground.width = width;
-            this.isGameRunning = true;
-            this.dino.setVelocity(0);
-            this.scoreText.setAlpha(1);
-            this.environment.setAlpha(1);
-            startEvent.remove();
-          }
-        }
-      })
-    }, null, this);
+    // this.physics.add.overlap(this.startTrigger, this.dino, () => {
+    //   if (this.startTrigger.y === 10) {
+    //     this.startTrigger.body.reset(0, height);
+    //     return;
+    //   }
+    //   this.startTrigger.disableBody(true, true);
+    //
+    //   const startEvent = this.time.addEvent({
+    //     delay: 1000 / 60,
+    //     loop: true,
+    //     callbackScope: this,
+    //     callback: () => {
+    //       this.dino.setVelocityX(80);
+    //       this.dino.play('dino-run', 1);
+    //       if (this.ground.width < width) {
+    //         this.ground.width += 17 * 2;
+    //       }
+    //       if (this.ground.width >= width) {
+    //         this.ground.width = width;
+    //         this.isGameRunning = true;
+    //         this.dino.setVelocity(0);
+    //         this.scoreText.setAlpha(1);
+    //         this.environment.setAlpha(1);
+    //         startEvent.remove();
+    //       }
+    //     }
+    //   })
+    // }, null, this);
 
     this.physics.add.overlap(this.bullets, this.obstacles, (bullet, obstacle) => {
-      bullet.setActive(false);
-      bullet.setVisible(false);
+      bullet.disableBody(true, true);
+
       obstacle.destroy();
     }, null, this);
   }
@@ -165,28 +183,37 @@ class PlayScene extends Phaser.Scene {
     })
   }
   handleInputs() {
-    this.input.keyboard.on('keydown_SPACE', () => {
-      if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
-      this.dino.body.height = 92;
-      this.dino.body.offset.y = 0;
-      this.jumpSound.play();
-      this.dino.setVelocityY(-1600);
-      this.dino.setTexture('dino', 0);
-    });
-
-    this.input.keyboard.on('keydown_DOWN', () => {
-      if (!this.dino.body.onFloor() || !this.isGameRunning) { return; }
-      this.dino.body.height = 58;
-      this.dino.body.offset.y = 34;
-    });
-    this.input.keyboard.on('keyup_DOWN', () => {
-      this.dino.body.height = 92;
-      this.dino.body.offset.y = 0;
-    });
-
+    // this.input.keyboard.on('keydown_SPACE', () => {
+    //   if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
+    //   this.dino.body.height = 92;
+    //   this.dino.body.offset.y = 0;
+    //   this.jumpSound.play();
+    //   this.dino.setVelocityY(-1600);
+    //   this.dino.setTexture('dino', 0);
+    // });
+    //
+    // this.input.keyboard.on('keydown_DOWN', () => {
+    //   if (!this.dino.body.onFloor() || !this.isGameRunning) { return; }
+    //   this.dino.body.height = 58;
+    //   this.dino.body.offset.y = 34;
+    // });
+    // this.input.keyboard.on('keyup_DOWN', () => {
+    //   this.dino.body.height = 92;
+    //   this.dino.body.offset.y = 0;
+    // });
+      this.input.keyboard.on('keydown_' + 'G', (event) => {
+          this.dino.setVelocityY(0);
+          this.dino.body.height = 92;
+          this.dino.body.offset.y = 0;
+          this.physics.resume();
+          this.obstacles.clear(true, true);
+          this.isGameRunning = true;
+          this.gameOverScreen.setAlpha(0);
+          this.anims.resumeAll();
+      });
     this.input.keyboard.on('keydown_' + 'F', (event) => {
       console.log("FIRE!");
-      this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
+        this.bullets.fireBullet(this.dino.body.x + 100, this.dino.body.y + 45);
     });
   }
 
@@ -216,32 +243,66 @@ class PlayScene extends Phaser.Scene {
     const obstacleNum = Math.floor(Math.random() * 7) + 1;
     const distance = Phaser.Math.Between(600, 900);
 
-    let obstacle;
-    if (obstacleNum > 6) {
-      const enemyHeight = [22, 50];
-      obstacle = this.obstacles
-        .create(width + distance, height - enemyHeight[Math.floor(Math.random() * 2)], 'enemy-bird');
-      obstacle.play('enemy-bird-fly', 1);
-      obstacle.body.height = obstacle.body.height / 1.5;
-    } else {
-      obstacle = this.obstacles.create(width + distance, height, `obsticle-${obstacleNum}`);
-      obstacle.body.offset.y = 10;
-    }
+    // let obstacle;
+    // if (obstacleNum > 6) {
+    //   const enemyHeight = [22, 50];
+    //   obstacle = this.obstacles
+    //     .create(width + distance, height - enemyHeight[Math.floor(Math.random() * 2)], 'enemy-bird');
+    //   obstacle.play('enemy-bird-fly', 1);
+    //   obstacle.body.height = obstacle.body.height / 1.5;
+    // } else {
+    //   obstacle = this.obstacles.create(width + distance, height, `obsticle-${obstacleNum}`);
+    //   obstacle.body.offset.y = 10;
+    // }
 
-    obstacle
-      .setOrigin(0, 1)
-      .setImmovable();
+    // Random letter
+    // let alphabet = "ABCDEF"
+    let obstacle_word = WORDS[Math.floor(Math.random() * WORDS.length)];
+    let i = 0;
+    for (let obstacle_letter of obstacle_word) {
+        // let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
+        let obstacle = this.obstacles.create(width + 300 + (i++ * 50), height, `letter-${obstacle_letter}`);
+
+        obstacle.setScale(0.2, 0.2);
+        obstacle.setData('letter', obstacle_letter);
+        obstacle
+            .setOrigin(0, 1)
+            .setImmovable();
+    }
   }
 
   // 60 fps
   update(time, delta) {
+    this.sinceLastFired += delta;
+    if (!queue.isEmpty()) {
+      let arr = queue.poll()
+      if (this.obstacles.getLength() !== 0) {
+        console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
+        let target_letter = this.obstacles.getChildren()[0].getData('letter');
+        // console.log(target_letter);
+        // console.log(arr);
+        // console.log('------')
+        if (arr.includes(target_letter.toLowerCase()) && this.sinceLastFired < 1000) {
+          console.log("Matched!!!");
+          this.bullets.fireBullet(this.dino.body.x + 100, this.dino.body.y + 45);
+          this.sinceLastFired = 0;
+        }
+        // this.feedbackText.setText(arr.join(','))
+      }
+    }
+
+    if (this.sinceLastFired > 1000) {
+      this.sinceLastFired = 0;
+    }
+
     if (!this.isGameRunning) { return; }
+
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
-    this.respawnTime += delta * this.gameSpeed * 0.08;
+    this.respawnTime += delta * this.gameSpeed * 0.2;
 
-    if (this.respawnTime >= 1500) {
+    if (this.respawnTime >= 1500 && this.obstacles.getLength() === 0) {
       this.placeObstacle();
       this.respawnTime = 0;
     }
@@ -260,15 +321,15 @@ class PlayScene extends Phaser.Scene {
       }
     });
 
-    if (this.dino.body.deltaAbsY() > 0) {
-      this.dino.anims.stop();
-      this.dino.setTexture('dino');
-    } else {
-
-      this.dino.body.height <= 58 ?
-        this.dino.play('dino-down-anim', true) :
-        this.dino.play('dino-run', true);
-    }
+    // if (this.dino.body.deltaAbsY() > 0) {
+    //   this.dino.anims.stop();
+    //   this.dino.setTexture('dino');
+    // } else {
+    //
+    //   this.dino.body.height <= 58 ?
+    //     this.dino.play('dino-down-anim', true) :
+    //     this.dino.play('dino-run', true);
+    // }
   }
 }
 
@@ -278,11 +339,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire(x, y) {
-    this.body.reset(x, y);
     this.angle = 90;
-    this.setActive(true);
-    this.setVisible(true);
-
+    this.enableBody(true, x, y, true, true);
     this.setVelocityX(1000);
   }
 
@@ -300,7 +358,7 @@ class Bullets extends Phaser.Physics.Arcade.Group {
     super(scene.physics.world, scene);
 
     this.createMultiple({
-      frameQuantity: 5,
+      frameQuantity: 1,
       key: 'bullet',
       active: false,
       visible: false,
@@ -310,13 +368,14 @@ class Bullets extends Phaser.Physics.Arcade.Group {
 
   fireBullet(x, y) {
     let bullet = this.getFirstDead(false);
+    if (!bullet) {
+      console.log("limit reached")
+    }
 
     if (bullet) {
       bullet.fire(x, y);
     }
   }
 }
-
-
 
 export default PlayScene;

@@ -234,18 +234,13 @@ function onResults(results) {
 
 
         for (let letter of 'abcdefghijklmnopqrstuvwxyz') {
-                    if (verify(dists(hand), hand, letter, 6)) {
-                        res.push(letter);
-                    }
-                }
+            if (verify(dists(hand), hand, letter, 5)) {
+                res.push(letter);
+            }
+        }
         console.log(res);
-        queue.push(res);
-        // verify(dists(hand), hand, 'd', 5);
-
+        // console.log(a);
         for (const landmarks of results.multiHandLandmarks) {
-            // drawC(canvasCtx, landmarks, HAND_CONNECTIONS,
-            //     { color: '#00FF00', lineWidth: 5 });
-            // console.log(HAND_CONNECTIONS);
             canvasCtx.strokeStyle = '#00FF00';
             canvasCtx.lineWidth = 5;
             for (let i of DIST_PAIRS) {
@@ -261,7 +256,6 @@ function onResults(results) {
                 // console.log(canvasCtx.height, canvasCtx.width);
                 canvasCtx.stroke();
             }
-
             drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
         }
     }
