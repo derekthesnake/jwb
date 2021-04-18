@@ -10,7 +10,7 @@ class PlayScene extends Phaser.Scene {
   }
 
   create() {
-    this.isGameRunning = true;
+    this.isGameRunning = false;
     this.gameSpeed = 2;
     this.respawnTime = 0;
     this.score = 0;
@@ -20,7 +20,7 @@ class PlayScene extends Phaser.Scene {
     this.hitSound = this.sound.add('hit', { volume: 0.2 });
     this.reachSound = this.sound.add('reach', { volume: 0.2 });
 
-    this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
+    // this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
     this.ground = this.add.tileSprite(0, height * 1.5, width, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
@@ -117,6 +117,10 @@ class PlayScene extends Phaser.Scene {
       this.anims.resumeAll();
     });
 
+    // this.startTrigger.on('pointerdown', () => {
+    //
+    // });
+
     // this.physics.add.overlap(this.startTrigger, this.dino, () => {
     //   if (this.startTrigger.y === 10) {
     //     this.startTrigger.body.reset(0, height);
@@ -179,28 +183,37 @@ class PlayScene extends Phaser.Scene {
     })
   }
   handleInputs() {
-    this.input.keyboard.on('keydown_SPACE', () => {
-      if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
-      this.dino.body.height = 92;
-      this.dino.body.offset.y = 0;
-      this.jumpSound.play();
-      this.dino.setVelocityY(-1600);
-      this.dino.setTexture('dino', 0);
-    });
-
-    this.input.keyboard.on('keydown_DOWN', () => {
-      if (!this.dino.body.onFloor() || !this.isGameRunning) { return; }
-      this.dino.body.height = 58;
-      this.dino.body.offset.y = 34;
-    });
-    this.input.keyboard.on('keyup_DOWN', () => {
-      this.dino.body.height = 92;
-      this.dino.body.offset.y = 0;
-    });
-
+    // this.input.keyboard.on('keydown_SPACE', () => {
+    //   if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
+    //   this.dino.body.height = 92;
+    //   this.dino.body.offset.y = 0;
+    //   this.jumpSound.play();
+    //   this.dino.setVelocityY(-1600);
+    //   this.dino.setTexture('dino', 0);
+    // });
+    //
+    // this.input.keyboard.on('keydown_DOWN', () => {
+    //   if (!this.dino.body.onFloor() || !this.isGameRunning) { return; }
+    //   this.dino.body.height = 58;
+    //   this.dino.body.offset.y = 34;
+    // });
+    // this.input.keyboard.on('keyup_DOWN', () => {
+    //   this.dino.body.height = 92;
+    //   this.dino.body.offset.y = 0;
+    // });
+      this.input.keyboard.on('keydown_' + 'G', (event) => {
+          this.dino.setVelocityY(0);
+          this.dino.body.height = 92;
+          this.dino.body.offset.y = 0;
+          this.physics.resume();
+          this.obstacles.clear(true, true);
+          this.isGameRunning = true;
+          this.gameOverScreen.setAlpha(0);
+          this.anims.resumeAll();
+      });
     this.input.keyboard.on('keydown_' + 'F', (event) => {
       console.log("FIRE!");
-      this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
+        this.bullets.fireBullet(this.dino.body.x + 100, this.dino.body.y + 45);
     });
   }
 
@@ -271,7 +284,7 @@ class PlayScene extends Phaser.Scene {
         // console.log('------')
         if (arr.includes(target_letter.toLowerCase()) && this.sinceLastFired < 1000) {
           console.log("Matched!!!");
-          this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
+          this.bullets.fireBullet(this.dino.body.x + 100, this.dino.body.y + 45);
           this.sinceLastFired = 0;
         }
         // this.feedbackText.setText(arr.join(','))
