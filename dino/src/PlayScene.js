@@ -87,7 +87,7 @@ class PlayScene extends Phaser.Scene {
       this.anims.pauseAll();
       this.dino.setTexture('dino-hurt');
       this.respawnTime = 0;
-      this.gameSpeed = 10;
+      this.gameSpeed = 2;
       this.gameOverScreen.setAlpha(1);
       this.score = 0;
       this.hitSound.play();
@@ -151,7 +151,7 @@ class PlayScene extends Phaser.Scene {
       callback: () => {
         if (!this.isGameRunning) { return; }
         this.score++;
-        this.gameSpeed += 0.01;
+        this.gameSpeed += 0.001;
 
         if (this.score % 100 === 0) {
           this.reachSound.play();
@@ -267,7 +267,7 @@ class PlayScene extends Phaser.Scene {
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
-    this.respawnTime += delta * this.gameSpeed * 0.08;
+    this.respawnTime += delta * this.gameSpeed * 0.2;
 
     if (this.respawnTime >= 1500) {
       this.placeObstacle();
@@ -325,7 +325,7 @@ class Bullets extends Phaser.Physics.Arcade.Group {
     super(scene.physics.world, scene);
 
     this.createMultiple({
-      frameQuantity: 5,
+      frameQuantity: 1,
       key: 'bullet',
       active: false,
       visible: false,
@@ -335,6 +335,9 @@ class Bullets extends Phaser.Physics.Arcade.Group {
 
   fireBullet(x, y) {
     let bullet = this.getFirstDead(false);
+    if (!bullet) {
+      console.log("limit reached")
+    }
 
     if (bullet) {
       bullet.fire(x, y);
