@@ -4,7 +4,7 @@ import Phaser from 'phaser';
 import PlayScene from './PlayScene';
 import PreloadScene from './PreloadScene';
 
-import './asl';
+// import './asl';
 
 const config = {
   type: Phaser.AUTO,
@@ -15,7 +15,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false,
+      debug: true,
     }
   },
   scene: [PreloadScene, PlayScene]

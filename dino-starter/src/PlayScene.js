@@ -165,6 +165,8 @@ class PlayScene extends Phaser.Scene {
     })
   }
   handleInputs() {
+    console.log('Handle inputs');
+    console.log(this.input.keyboard);
     this.input.keyboard.on('keydown_SPACE', () => {
       if (!this.dino.body.onFloor() || this.dino.body.velocity.x > 0) { return; }
       this.dino.body.height = 92;
@@ -235,7 +237,7 @@ class PlayScene extends Phaser.Scene {
 
   // 60 fps
   update(time, delta) {
-    if (!this.isGameRunning) { return; }
+    // if (!this.isGameRunning) { return; }
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
