@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
-const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'CUBE', 'WATER', 'MILK', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -22,13 +22,14 @@ class PlayScene extends Phaser.Scene {
 
     this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
-    this.ground = this.add.tileSprite(0, height, 88, 26, 'ground').setOrigin(0, 1);
+    this.ground = this.add.tileSprite(0, height * 1.5, 480, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
       .setOrigin(0, 1)
       .setBodySize(44, 92)
       .setDepth(1)
       .setCollideWorldBounds(true)
-      .setGravityY(5000);
+      .setGravityY(5000)
+      .setScale(0.25, 0.25);
 
     this.scoreText = this.add
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
@@ -127,9 +128,10 @@ class PlayScene extends Phaser.Scene {
           if (this.ground.width < width) {
             this.ground.width += 17 * 2;
           }
+            // this.isGameRunning = true;
           if (this.ground.width >= width) {
             this.ground.width = width;
-            this.isGameRunning = true;
+
             this.dino.setVelocity(0);
             this.scoreText.setAlpha(1);
             this.environment.setAlpha(1);
@@ -253,6 +255,7 @@ class PlayScene extends Phaser.Scene {
 
   // 60 fps
   update(time, delta) {
+    console.log("update", this.isGameRunning);
     if (!queue.isEmpty()) {
       let arr = queue.poll()
       if (this.obstacles.getLength() !== 0) {
@@ -301,7 +304,7 @@ class PlayScene extends Phaser.Scene {
     } else {
 
       this.dino.body.height <= 58 ?
-        this.dino.play('dino-down-anim', true) :
+        this.dino.play('dino-down-anim', true):
         this.dino.play('dino-run', true);
     }
   }
