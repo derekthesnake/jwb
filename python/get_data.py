@@ -103,7 +103,7 @@ def read_static():
       max_num_hands=2,
       min_detection_confidence=0.5) as hands:
 
-    letters2 = [[] for _ in range(5)] #[0 for _ in range(26)]
+    letters2 = [] # [[] for _ in range(5)] #[0 for _ in range(26)]
     for (parent, _, files) in tqdm.tqdm(list(sorted(os.walk('../ASL Alphabet Dataset'), key = lambda i: i[0][-1]))):
       if parent == '../ASL Alphabet Dataset':
         continue
@@ -123,7 +123,8 @@ def read_static():
           continue
         
         hand_1 = results.multi_hand_landmarks[0]
-        letters2[idx].append(dists(hand_1))
+        # letters2[idx].append(dists(hand_1))
+        l.append(dists(hand_1))
       # l.append(dists(hand_1))
 
       # for i in l: print(i)
@@ -136,7 +137,8 @@ def read_static():
       # './annotated_image.png', cv2.flip(annotated_image, 1))
       # input()
         
-      # l = list(map(statistics.mean, zip(*l)))
+      l = list(map(statistics.mean, zip(*l)))
+      letters2.append(l)
       # letters2[string.ascii_uppercase.index(parent[-1])] = l
       # letters2.append(l)
 
@@ -146,7 +148,7 @@ def read_static():
       f.write('\n')
 
 read_static()
-letters = list(map(ast.literal_eval, open('letters.txt').readlines()))
+letters = [list(map(ast.literal_eval, open('letters.txt').readlines()))]
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
