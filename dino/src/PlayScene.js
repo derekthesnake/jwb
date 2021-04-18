@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -88,7 +89,7 @@ class PlayScene extends Phaser.Scene {
       this.anims.pauseAll();
       this.dino.setTexture('dino-hurt');
       this.respawnTime = 0;
-      this.gameSpeed = 5;
+      this.gameSpeed = 2;
       this.gameOverScreen.setAlpha(1);
       this.score = 0;
       this.hitSound.play();
@@ -246,10 +247,11 @@ class PlayScene extends Phaser.Scene {
       this.feedbackText.setText(arr.join(','))
       console.log(this.obstacles.getChildren().map(x => x.getData('letter')));
       if (this.obstacles.getLength() !== 0) {
+        console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
         let target_letter = this.obstacles.getChildren()[0].getData('letter');
-        console.log(target_letter);
-        console.log(arr);
-        console.log('------')
+        // console.log(target_letter);
+        // console.log(arr);
+        // console.log('------')
         if (arr.includes(target_letter.toLowerCase())) {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
