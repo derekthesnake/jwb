@@ -235,6 +235,7 @@ class PlayScene extends Phaser.Scene {
 
   // 60 fps
   update(time, delta) {
+    if ()
     if (!this.isGameRunning) { return; }
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
