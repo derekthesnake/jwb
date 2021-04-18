@@ -238,7 +238,8 @@ function onResults(results) {
                 res.push(letter);
             }
         }
-        console.log(res);
+        queue.push(res);
+        // console.log(res);
         // console.log(a);
         for (const landmarks of results.multiHandLandmarks) {
             canvasCtx.strokeStyle = '#00FF00';
