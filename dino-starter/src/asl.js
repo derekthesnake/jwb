@@ -1,5 +1,7 @@
 // import { Hands } from '@mediapipe/hands';
+import { Camera } from '@mediapipe/camera_utils/camera_utils';
 import { Hands } from '@mediapipe/hands/hands';
+import { drawConnectors, HAND_CONNECTIONS, drawLandmarks } from '@mediapipe/drawing_utils/drawing_utils';
 
 const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
@@ -13,10 +15,9 @@ var letters = [[[0.5417076942761735, 0.6163742410339085, 1.2180272824490488, 0.3
 ]
 
 function dist(a, b, z = true) {
+    let add = 0;
     if (z) {
         add = (a.z - b.z) ^ 2
-    } else {
-        add = 0
     }
     return Math.sqrt((a.x - b.x) ^ 2 + (a.y - b.y) ** 2 + add)
 }
@@ -52,7 +53,7 @@ const DIST_PAIRS = [
 const angles = [[0, 1], [0, 4], [0, 16], [1, 2], [2, 3], [4, 5], [4, 8], [4, 16], [5, 6], [5, 8], [6, 7], [8, 9], [8, 12], [9, 10], [9, 12], [10, 11], [12, 13], [12, 17], [13, 14], [13, 17], [14, 15], [16, 17], [16, 18], [17, 18], [18, 19], [19, 20]]
 
 function dotproduct(v1, v2) {
-    sum = 0;
+    let sum = 0;
     for (var i = 0; i < Math.max(v1.length, v2.length); i++) {
         sum += v1[i] * v2[i];
     }

@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.1.1617146909",
+    "@mediapipe/control_utils": "^0.1.1617146970",
+    "@mediapipe/drawing_utils": "^0.2.1617146986",
     "@mediapipe/hands": "^0.1.1617147326",
     "phaser": "^3.24.1",
     "webpack-merge": "^5.1.4"
