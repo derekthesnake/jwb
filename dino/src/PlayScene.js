@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
-const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE', 'NOSE'];
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'CUBE', 'WATER', 'MILK', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -11,8 +11,8 @@ class PlayScene extends Phaser.Scene {
 
   create() {
     this.isGameRunning = false;
-    this.gameSpeed = 2;
-    this.respawnTime = 0;
+    this.gameSpeed = 5;
+    this.respawnTime = 1000;
     this.score = 0;
     const { height, width } = this.game.config;
 
@@ -22,7 +22,7 @@ class PlayScene extends Phaser.Scene {
 
     // this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
-    this.ground = this.add.tileSprite(0, height * 1.5, width, 480, 'ground').setOrigin(0, 1);
+    this.ground = this.add.tileSprite(0, height * 1.5, 3836, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
       .setOrigin(0, 1)
       // .setBodySize(44, 92)
@@ -95,7 +95,7 @@ class PlayScene extends Phaser.Scene {
       this.isGameRunning = false;
       this.anims.pauseAll();
       this.dino.setTexture('dino-hurt');
-      this.respawnTime = 0;
+      this.respawnTime = 1000;
       this.gameSpeed = 2;
       this.gameOverScreen.setAlpha(1);
       this.score = 0;
@@ -164,7 +164,7 @@ class PlayScene extends Phaser.Scene {
       callback: () => {
         if (!this.isGameRunning) { return; }
         this.score++;
-        this.gameSpeed += 0.001;
+        this.gameSpeed += 0.01;
 
         if (this.score % 100 === 0) {
           this.reachSound.play();
@@ -261,7 +261,7 @@ class PlayScene extends Phaser.Scene {
     let i = 0;
     for (let obstacle_letter of obstacle_word) {
         // let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
-        let obstacle = this.obstacles.create(width + 100 + (i++ * 50), height, `letter-${obstacle_letter}`);
+        let obstacle = this.obstacles.create(width + 300 + (i++ * 50), height, `letter-${obstacle_letter}`);
 
         obstacle.setScale(0.2, 0.2);
         obstacle.setData('letter', obstacle_letter);
@@ -302,7 +302,7 @@ class PlayScene extends Phaser.Scene {
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
     this.respawnTime += delta * this.gameSpeed * 0.2;
 
-    if (this.respawnTime >= 1500 && this.obstacles.getLength() < 5) {
+    if (this.respawnTime >= 1500 && this.obstacles.getLength() === 0) {
       this.placeObstacle();
       this.respawnTime = 0;
     }
