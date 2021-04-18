@@ -10,7 +10,7 @@ class PlayScene extends Phaser.Scene {
   }
 
   create() {
-    this.isGameRunning = false;
+    this.isGameRunning = true;
     this.gameSpeed = 2;
     this.respawnTime = 0;
     this.score = 0;
@@ -22,13 +22,14 @@ class PlayScene extends Phaser.Scene {
 
     this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
-    this.ground = this.add.tileSprite(0, height * 1.5, 480, 480, 'ground').setOrigin(0, 1);
+    this.ground = this.add.tileSprite(0, height * 1.5, width, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
       .setOrigin(0, 1)
-      .setBodySize(44, 92)
+      // .setBodySize(44, 92)
       .setDepth(1)
       .setCollideWorldBounds(true)
-      .setGravityY(5000);
+      .setGravityY(5000)
+        .setScale(0.25, 0.25);
 
     this.scoreText = this.add
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
@@ -71,6 +72,10 @@ class PlayScene extends Phaser.Scene {
     this.initStartTrigger();
     this.handleInputs();
     this.handleScore();
+
+      this.dino.setVelocity(0);
+      this.scoreText.setAlpha(1);
+      this.environment.setAlpha(1);
   }
 
   initColliders() {
@@ -110,34 +115,34 @@ class PlayScene extends Phaser.Scene {
       this.anims.resumeAll();
     });
 
-    this.physics.add.overlap(this.startTrigger, this.dino, () => {
-      if (this.startTrigger.y === 10) {
-        this.startTrigger.body.reset(0, height);
-        return;
-      }
-      this.startTrigger.disableBody(true, true);
-
-      const startEvent = this.time.addEvent({
-        delay: 1000 / 60,
-        loop: true,
-        callbackScope: this,
-        callback: () => {
-          this.dino.setVelocityX(80);
-          this.dino.play('dino-run', 1);
-          if (this.ground.width < width) {
-            this.ground.width += 17 * 2;
-          }
-          if (this.ground.width >= width) {
-            this.ground.width = width;
-            this.isGameRunning = true;
-            this.dino.setVelocity(0);
-            this.scoreText.setAlpha(1);
-            this.environment.setAlpha(1);
-            startEvent.remove();
-          }
-        }
-      })
-    }, null, this);
+    // this.physics.add.overlap(this.startTrigger, this.dino, () => {
+    //   if (this.startTrigger.y === 10) {
+    //     this.startTrigger.body.reset(0, height);
+    //     return;
+    //   }
+    //   this.startTrigger.disableBody(true, true);
+    //
+    //   const startEvent = this.time.addEvent({
+    //     delay: 1000 / 60,
+    //     loop: true,
+    //     callbackScope: this,
+    //     callback: () => {
+    //       this.dino.setVelocityX(80);
+    //       this.dino.play('dino-run', 1);
+    //       if (this.ground.width < width) {
+    //         this.ground.width += 17 * 2;
+    //       }
+    //       if (this.ground.width >= width) {
+    //         this.ground.width = width;
+    //         this.isGameRunning = true;
+    //         this.dino.setVelocity(0);
+    //         this.scoreText.setAlpha(1);
+    //         this.environment.setAlpha(1);
+    //         startEvent.remove();
+    //       }
+    //     }
+    //   })
+    // }, null, this);
 
     this.physics.add.overlap(this.bullets, this.obstacles, (bullet, obstacle) => {
       bullet.disableBody(true, true);
@@ -295,15 +300,15 @@ class PlayScene extends Phaser.Scene {
       }
     });
 
-    if (this.dino.body.deltaAbsY() > 0) {
-      this.dino.anims.stop();
-      this.dino.setTexture('dino');
-    } else {
-
-      this.dino.body.height <= 58 ?
-        this.dino.play('dino-down-anim', true) :
-        this.dino.play('dino-run', true);
-    }
+    // if (this.dino.body.deltaAbsY() > 0) {
+    //   this.dino.anims.stop();
+    //   this.dino.setTexture('dino');
+    // } else {
+    //
+    //   this.dino.body.height <= 58 ?
+    //     this.dino.play('dino-down-anim', true) :
+    //     this.dino.play('dino-run', true);
+    // }
   }
 }
 
