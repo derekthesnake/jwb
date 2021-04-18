@@ -3,6 +3,7 @@ import { aslQueue, queue } from './asl';
 
 const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
 
+const GAME_SPEED = 1
 class PlayScene extends Phaser.Scene {
 
   constructor() {
@@ -11,8 +12,8 @@ class PlayScene extends Phaser.Scene {
 
   create() {
     this.isGameRunning = false;
-    this.gameSpeed = 2;
-    this.respawnTime = 0;
+    this.gameSpeed = GAME_SPEED;
+    this.respawnTime = 1000;
     this.score = 0;
     const { height, width } = this.game.config;
 
@@ -89,7 +90,7 @@ class PlayScene extends Phaser.Scene {
       this.anims.pauseAll();
       this.dino.setTexture('dino-hurt');
       this.respawnTime = 0;
-      this.gameSpeed = 2;
+      this.gameSpeed = GAME_SPEED;
       this.gameOverScreen.setAlpha(1);
       this.score = 0;
       this.hitSound.play();
@@ -222,18 +223,12 @@ class PlayScene extends Phaser.Scene {
     const { width, height } = this.game.config;
     const distance = Phaser.Math.Between(3, 9);
 
-
-    // Random letter
-    let alphabet = "ABCDEF"
-    let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
-
-    const WORDS = ["CAD", "AID", "BEACH", "ADAGE"]
     let word = WORDS[Math.floor(Math.random() * WORDS.length)]
     for (const [i, letter] of word.split("").entries()) {
       let obstacle = this.obstacles.create(width + distance + i * 50, height, `letter-${letter}`);
 
       obstacle.setScale(0.2, 0.2);
-      obstacle.setData('letter', obstacle_letter);
+      obstacle.setData('letter', letter);
       obstacle
         .setOrigin(0, 1)
         .setImmovable();
@@ -245,13 +240,12 @@ class PlayScene extends Phaser.Scene {
     if (!queue.isEmpty()) {
       let arr = queue.poll()
       this.feedbackText.setText(arr.join(','))
-      console.log(this.obstacles.getChildren().map(x => x.getData('letter')));
       if (this.obstacles.getLength() !== 0) {
         console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
         let target_letter = this.obstacles.getChildren()[0].getData('letter');
-        // console.log(target_letter);
-        // console.log(arr);
-        // console.log('------')
+        console.log(target_letter);
+        console.log(arr);
+        console.log('------')
         if (arr.includes(target_letter.toLowerCase())) {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
@@ -264,7 +258,7 @@ class PlayScene extends Phaser.Scene {
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
-    this.respawnTime += delta * this.gameSpeed * 0.05;
+    this.respawnTime += delta * this.gameSpeed * 0.1;
 
     if (this.respawnTime >= 1500) {
       this.placeObstacle();
