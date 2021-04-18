@@ -7,6 +7,30 @@ const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasCtx = canvasElement.getContext('2d');
 
+let drawC = function(a,c,b,d) {
+    if(c&&b){
+        d=x(d);
+        a.save();
+        var e=a.canvas,f=0;
+        b=l(b);
+
+        for(var g=b.next();!g.done;g=b.next()){
+            console.log("drawing g", g);
+            var k=g.value;
+            a.beginPath();
+            g=c[k[0]];
+            k=c[k[1]];
+            // g&&k&&(void 0===g.visibility||g.visibility>d.visibilityMin)&&(void 0===k.visibility||k.visibility>d.visibilityMin)&&(
+                a.strokeStyle=y(d.color,{index:f,from:g,to:k});
+                    a.lineWidth=y(d.lineWidth,{index:f,from:g,to:k});
+                    a.moveTo(g.x*e.width,g.y*e.height);
+                    a.lineTo(k.x*e.width,k.y*e.height);
+            ++f;
+            a.stroke()}
+        a.restore();
+    }
+};
+
 var letters = [[[0.601768538792021, 0.7119524947900248, 1.2679235093171262, 0.35211550486865195, 0.4445050023815961, 0.729944679801462, 1.989955954180218, 0.7560446408045891, 2.4969083426859413, 1.627455009355031, 0.3972057505509283, 1.4693024377458543, 0.21756765674002454, 2.19859195876453, 1.3929822860838637, 0.8139993705938278, 1.3905018950370032, 0.09231864183618742, 2.337576263033472, 1.4033233758363552, 0.6700909835819746, 1.3962463589143863, 0.6565470618955004, 1.5805586211650533, 2.3202819473842418, 0.5794893199716337],
     [0.7899748261858237, 1.0265332006820278, 1.3224904428252218, 1.0800620147551372, 0.7962723277712884, 0.3757150778325598, 1.5337685516889845, 0.5459690722811711, 0.16663505913277818, 1.2363735359978194, 0.16013224339796098, 1.2317725715776464, 0.6249396681216122, 0.18099179759713824, 1.7549416868451835, 0.11262294420890649, 1.7530845502273649, 0.44958035605243923, 0.14274279951071867, 2.1152074177218108, 0.1183040677107382, 1.9162668503335327, 0.24369801275162517, 2.1243251997252375, 0.057805484534456594, 0.21180497303280696],
     [0.6048549799081686, 0.9028413544019075, 1.3769286175685462, 0.310928311313287, 0.10040589459898717, 0.5029814489142758, 1.8130090280452025, 0.6764704829176672, 0.5293640178566557, 1.4615135481191908, 0.36803824302117605, 1.3758572610549247, 0.45525110878112324, 0.7939402595488548, 1.7095809673855167, 0.49801104012242514, 1.7279582036167223, 0.2613038260553748, 0.7817561975306693, 1.8915871351245446, 0.41500668296849824, 1.7655239488817778, 0.46244997015175326, 1.835891499236942, 0.4700233075752622, 0.22088092064104722],
@@ -219,12 +243,29 @@ function onResults(results) {
         // verify(dists(hand), hand, 'd', 5);
 
         for (const landmarks of results.multiHandLandmarks) {
-            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,
-                { color: '#00FF00', lineWidth: 5 });
+            // drawC(canvasCtx, landmarks, HAND_CONNECTIONS,
+            //     { color: '#00FF00', lineWidth: 5 });
+            // console.log(HAND_CONNECTIONS);
+            canvasCtx.strokeStyle = '#00FF00';
+            canvasCtx.lineWidth = 5;
+            for (let i of DIST_PAIRS) {
+                // console.log(i);
+                let [a, b] = i;
+                let l1 = landmarks[a];
+                let l2 = landmarks[b];
+
+                // console.log(l1, l2);
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(l1.x * canvasElement.width, l1.y * canvasElement.height);
+                canvasCtx.lineTo(l2.x * canvasElement.width, l2.y * canvasElement.height);
+                // console.log(canvasCtx.height, canvasCtx.width);
+                canvasCtx.stroke();
+            }
+
             drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
         }
     }
-    canvasCtx.restore();
+    // canvasCtx.restore();
 
     // return res;
 }

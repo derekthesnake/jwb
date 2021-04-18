@@ -70,9 +70,11 @@ def dists(hand):
     d.append(ang)
   return d
 
+
+fn_helper = lambda dists: lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
 def _classify(dists, hand, l):
-  fn = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
-  x = min(l, key = fn)
+  fn_helper = lambda i: sum(it.starmap(dist_arr, zip(dists, i)))
+  x = min(l, key = fn_helper)
   # print(list(map(fn, letters)))
   s = string.ascii_letters[l.index(x)]
 
@@ -96,6 +98,11 @@ def classify(dists, hand):
   # if x[0] == 'o' and max(x, key=x.count) == 'n':
   #   return 'm'
   return max(x, key=x.count)
+
+def verify(dists, hand, target, threshold):
+  dist = fn_helper(dists)(letters[0][ord(target) - 97])
+  print(dist)
+  return dist < threshold
 
 def read_static():
   with mp_hands.Hands(
@@ -147,7 +154,7 @@ def read_static():
       f.write(str(i))
       f.write('\n')
 
-read_static()
+# read_static()
 letters = [list(map(ast.literal_eval, open('letters.txt').readlines()))]
 
 # For webcam input:
@@ -178,6 +185,7 @@ with mp_hands.Hands(
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
         print(classify(dists(hand_landmarks), hand_landmarks))
+        # print([i for i in 'abcdefghijklmnopqrstuvwxyz' if verify(dists(hand_landmarks), hand_landmarks, i, 5)])
     cv2.imshow('MediaPipe Hands', image)
     if cv2.waitKey(5) & 0xFF == 27:
       break
