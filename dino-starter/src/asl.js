@@ -1,5 +1,5 @@
 // import { Hands } from '@mediapipe/hands';
-import { Hands } from '@mediapipe/hands';
+import { Hands } from '@mediapipe/hands/hands';
 
 const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
