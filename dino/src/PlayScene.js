@@ -29,8 +29,8 @@ class PlayScene extends Phaser.Scene {
       .setBodySize(44, 92)
       .setDepth(1)
       .setCollideWorldBounds(true)
-      .setGravityY(5000)
-      .setScale(0.25, 0.25);
+      .setGravityY(5000);
+    // .setScale(0.25, 0.25);
 
     this.scoreText = this.add
       .text(width, 0, '00000', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
@@ -129,10 +129,10 @@ class PlayScene extends Phaser.Scene {
           if (this.ground.width < width) {
             this.ground.width += 17 * 2;
           }
-            // this.isGameRunning = true;
+          //   this.isGameRunning = true;
           if (this.ground.width >= width) {
             this.ground.width = width;
-
+            this.isGameRunning = true;
             this.dino.setVelocity(0);
             this.scoreText.setAlpha(1);
             this.environment.setAlpha(1);
@@ -225,6 +225,8 @@ class PlayScene extends Phaser.Scene {
     const { width, height } = this.game.config;
     const distance = Phaser.Math.Between(3, 9);
 
+
+    // const WORDS = ["CAD", "AID", "BEACH", "ADAGE"]
     let word = WORDS[Math.floor(Math.random() * WORDS.length)]
     for (const [i, letter] of word.split("").entries()) {
       let obstacle = this.obstacles.create(width + distance + i * 50, height, `letter-${letter}`);
@@ -288,7 +290,7 @@ class PlayScene extends Phaser.Scene {
     } else {
 
       this.dino.body.height <= 58 ?
-        this.dino.play('dino-down-anim', true):
+        this.dino.play('dino-down-anim', true) :
         this.dino.play('dino-run', true);
     }
   }
