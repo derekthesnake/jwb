@@ -193,10 +193,24 @@ function onResults(results) {
                 res.push(letter);
             }
         }
+        console.log(res);
         // console.log(a);
         for (const landmarks of results.multiHandLandmarks) {
-            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS,
-                { color: '#00FF00', lineWidth: 5 });
+            canvasCtx.strokeStyle = '#00FF00';
+            canvasCtx.lineWidth = 5;
+            for (let i of DIST_PAIRS) {
+                // console.log(i);
+                let [a, b] = i;
+                let l1 = landmarks[a];
+                let l2 = landmarks[b];
+
+                // console.log(l1, l2);
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(l1.x * canvasElement.width, l1.y * canvasElement.height);
+                canvasCtx.lineTo(l2.x * canvasElement.width, l2.y * canvasElement.height);
+                // console.log(canvasCtx.height, canvasCtx.width);
+                canvasCtx.stroke();
+            }
             drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
         }
     }

@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
+
 class PlayScene extends Phaser.Scene {
 
   constructor() {
@@ -221,7 +223,7 @@ class PlayScene extends Phaser.Scene {
     const obstacleNum = Math.floor(Math.random() * 7) + 1;
     const distance = Phaser.Math.Between(600, 900);
 
-    let obstacle;
+    // let obstacle;
     // if (obstacleNum > 6) {
     //   const enemyHeight = [22, 50];
     //   obstacle = this.obstacles
@@ -234,15 +236,19 @@ class PlayScene extends Phaser.Scene {
     // }
 
     // Random letter
-    let alphabet = "ABCDEF"
-    let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
-    obstacle = this.obstacles.create(width + distance, height, `letter-${obstacle_letter}`);
+    // let alphabet = "ABCDEF"
+    let obstacle_word = WORDS[Math.floor(Math.random() * WORDS.length)];
+    let i = 0;
+    for (let obstacle_letter of obstacle_word) {
+        // let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
+        let obstacle = this.obstacles.create(width + 100 + (i++ * 50), height, `letter-${obstacle_letter}`);
 
-    obstacle.setScale(0.2, 0.2);
-    obstacle.setData('letter', obstacle_letter);
-    obstacle
-      .setOrigin(0, 1)
-      .setImmovable();
+        obstacle.setScale(0.2, 0.2);
+        obstacle.setData('letter', obstacle_letter);
+        obstacle
+            .setOrigin(0, 1)
+            .setImmovable();
+    }
   }
 
   // 60 fps
@@ -250,10 +256,11 @@ class PlayScene extends Phaser.Scene {
     if (!queue.isEmpty()) {
       let arr = queue.poll()
       if (this.obstacles.getLength() !== 0) {
+        console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
         let target_letter = this.obstacles.getChildren()[0].getData('letter');
-        console.log(target_letter);
-        console.log(arr);
-        console.log('------')
+        // console.log(target_letter);
+        // console.log(arr);
+        // console.log('------')
         if (arr.includes(target_letter.toLowerCase())) {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
