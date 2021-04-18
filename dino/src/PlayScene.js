@@ -222,34 +222,23 @@ class PlayScene extends Phaser.Scene {
 
   placeObstacle() {
     const { width, height } = this.game.config;
-    const obstacleNum = Math.floor(Math.random() * 7) + 1;
-    const distance = Phaser.Math.Between(600, 900);
+    const distance = Phaser.Math.Between(3, 9);
 
-    // let obstacle;
-    // if (obstacleNum > 6) {
-    //   const enemyHeight = [22, 50];
-    //   obstacle = this.obstacles
-    //     .create(width + distance, height - enemyHeight[Math.floor(Math.random() * 2)], 'enemy-bird');
-    //   obstacle.play('enemy-bird-fly', 1);
-    //   obstacle.body.height = obstacle.body.height / 1.5;
-    // } else {
-    //   obstacle = this.obstacles.create(width + distance, height, `obsticle-${obstacleNum}`);
-    //   obstacle.body.offset.y = 10;
-    // }
 
     // Random letter
-    // let alphabet = "ABCDEF"
-    let obstacle_word = WORDS[Math.floor(Math.random() * WORDS.length)];
-    let i = 0;
-    for (let obstacle_letter of obstacle_word) {
-        // let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
-        let obstacle = this.obstacles.create(width + 100 + (i++ * 50), height, `letter-${obstacle_letter}`);
+    let alphabet = "ABCDEF"
+    let obstacle_letter = alphabet[Math.floor(Math.random() * alphabet.length)];
 
-        obstacle.setScale(0.2, 0.2);
-        obstacle.setData('letter', obstacle_letter);
-        obstacle
-            .setOrigin(0, 1)
-            .setImmovable();
+    const WORDS = ["CAD", "AID", "BEACH", "ADAGE"]
+    let word = WORDS[Math.floor(Math.random() * WORDS.length)]
+    for (const [i, letter] of word.split("").entries()) {
+      let obstacle = this.obstacles.create(width + distance + i * 50, height, `letter-${letter}`);
+
+      obstacle.setScale(0.2, 0.2);
+      obstacle.setData('letter', obstacle_letter);
+      obstacle
+        .setOrigin(0, 1)
+        .setImmovable();
     }
   }
 
@@ -258,6 +247,8 @@ class PlayScene extends Phaser.Scene {
     console.log("update", this.isGameRunning);
     if (!queue.isEmpty()) {
       let arr = queue.poll()
+      this.feedbackText.setText(arr.join(','))
+      console.log(this.obstacles.getChildren().map(x => x.getData('letter')));
       if (this.obstacles.getLength() !== 0) {
         console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
         let target_letter = this.obstacles.getChildren()[0].getData('letter');
@@ -268,7 +259,6 @@ class PlayScene extends Phaser.Scene {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
         }
-        this.feedbackText.setText(arr.join(','))
       }
     }
 
@@ -277,7 +267,7 @@ class PlayScene extends Phaser.Scene {
     this.ground.tilePositionX += this.gameSpeed;
     Phaser.Actions.IncX(this.obstacles.getChildren(), -this.gameSpeed);
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
-    this.respawnTime += delta * this.gameSpeed * 0.2;
+    this.respawnTime += delta * this.gameSpeed * 0.05;
 
     if (this.respawnTime >= 1500) {
       this.placeObstacle();
@@ -324,8 +314,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.x >= this.scene.game.config.width) {
-      this.setActive(false);
-      this.setVisible(false);
+      this.disableBody(true, true);
     }
   }
 }
