@@ -4,6 +4,8 @@ import Phaser from 'phaser';
 import PlayScene from './PlayScene';
 import PreloadScene from './PreloadScene';
 
+import './asl';
+
 const config = {
   type: Phaser.AUTO,
   width: 1000,

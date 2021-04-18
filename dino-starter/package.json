@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mediapipe/hands": "^0.1.1617147326",
     "phaser": "^3.24.1",
     "webpack-merge": "^5.1.4"
   },
