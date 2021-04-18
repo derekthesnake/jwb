@@ -1,9 +1,7 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
-// const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE', 'NOSE'];
-
-const WORDS = ['ANES'];
+const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE', 'NOSE'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -276,7 +274,7 @@ class PlayScene extends Phaser.Scene {
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
           this.sinceLastFired = 0;
         }
-        this.feedbackText.setText(arr.join(','))
+        // this.feedbackText.setText(arr.join(','))
       }
     }
 
