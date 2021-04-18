@@ -275,13 +275,13 @@ class PlayScene extends Phaser.Scene {
   update(time, delta) {
     this.sinceLastFired += delta;
     if (!queue.isEmpty()) {
-      let arr = queue.poll()
+      let arr = queue.poll();
       if (this.obstacles.getLength() !== 0) {
         console.log(this.obstacles.getChildren().map(i => i.getData('letter')));
         let target_letter = this.obstacles.getChildren()[0].getData('letter');
-        // console.log(target_letter);
-        // console.log(arr);
-        // console.log('------')
+        console.log(target_letter);
+        console.log(arr);
+        console.log('------');
         if (arr.includes(target_letter.toLowerCase()) && this.sinceLastFired < 1000) {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x + 100, this.dino.body.y + 45);
