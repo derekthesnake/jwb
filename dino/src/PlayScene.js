@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { aslQueue, queue } from './asl';
 
-const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH'];
+// const WORDS = ['BAT', 'CAT', 'HELLO', 'CAR', 'DRIVE', 'SUN', 'WALK', 'PLAY', 'TABLE', 'TRUCK', 'RACE', 'CHAIR', 'WORLD', 'SAW', 'BIRD', 'PEN', 'CUBE', 'WATER', 'MILK', 'PHONE', 'DESK', 'KNIFE', 'FORK', 'LIGHT', 'LAMP', 'OIL', 'RUBY', 'SALT', 'DUCK', 'BLUE', 'RED', 'STOP', 'DEBUG', 'CODE', 'CAT', 'DOG', 'FROG', 'TOAD', 'STAR', 'EARTH', 'START', 'LATE', 'EARLY', 'SIGN', 'HEAD', 'FOOT', 'HAND', 'EAR', 'EYE', 'NOSE'];
+
+const WORDS = ['ANES'];
 
 class PlayScene extends Phaser.Scene {
 
@@ -42,7 +44,7 @@ class PlayScene extends Phaser.Scene {
       .setAlpha(0);
 
     this.feedbackText = this.add
-      .text(0, 0, 'START', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
+      .text(0, 0, '', { fill: '#535353', font: '900 35px Courier', resolution: 5 })
       .setOrigin(0, 0);
 
     this.gameOverScreen = this.add.container(width / 2, height / 2 - 50).setAlpha(0);
@@ -76,6 +78,8 @@ class PlayScene extends Phaser.Scene {
       this.dino.setVelocity(0);
       this.scoreText.setAlpha(1);
       this.environment.setAlpha(1);
+
+    this.sinceLastFired = 0;
   }
 
   initColliders() {
@@ -258,6 +262,7 @@ class PlayScene extends Phaser.Scene {
 
   // 60 fps
   update(time, delta) {
+    this.sinceLastFired += delta;
     if (!queue.isEmpty()) {
       let arr = queue.poll()
       if (this.obstacles.getLength() !== 0) {
@@ -266,12 +271,17 @@ class PlayScene extends Phaser.Scene {
         // console.log(target_letter);
         // console.log(arr);
         // console.log('------')
-        if (arr.includes(target_letter.toLowerCase())) {
+        if (arr.includes(target_letter.toLowerCase()) && this.sinceLastFired < 1000) {
           console.log("Matched!!!");
           this.bullets.fireBullet(this.dino.body.x, this.dino.body.y + 30);
+          this.sinceLastFired = 0;
         }
         this.feedbackText.setText(arr.join(','))
       }
+    }
+
+    if (this.sinceLastFired > 1000) {
+      this.sinceLastFired = 0;
     }
 
     if (!this.isGameRunning) { return; }
