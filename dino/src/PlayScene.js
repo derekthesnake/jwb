@@ -22,7 +22,7 @@ class PlayScene extends Phaser.Scene {
 
     this.startTrigger = this.physics.add.sprite(0, 10).setOrigin(0, 1).setImmovable();
 
-    this.ground = this.add.tileSprite(0, height, 88, 26, 'ground').setOrigin(0, 1);
+    this.ground = this.add.tileSprite(0, height * 1.5, 480, 480, 'ground').setOrigin(0, 1);
     this.dino = this.physics.add.sprite(0, height, 'dino-idle')
       .setOrigin(0, 1)
       .setBodySize(44, 92)
@@ -276,7 +276,7 @@ class PlayScene extends Phaser.Scene {
     Phaser.Actions.IncX(this.environment.getChildren(), -0.5);
     this.respawnTime += delta * this.gameSpeed * 0.2;
 
-    if (this.respawnTime >= 1500) {
+    if (this.respawnTime >= 1500 && this.obstacles.getLength() < 5) {
       this.placeObstacle();
       this.respawnTime = 0;
     }
